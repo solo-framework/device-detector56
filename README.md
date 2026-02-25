@@ -8,7 +8,6 @@ DeviceDetector
 ## Code Status
 
 [![PHPUnit](https://github.com/matomo-org/device-detector/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/matomo-org/device-detector/actions/workflows/phpunit.yml?branch=master "PHPUnit")
-[![PHPStan](https://github.com/matomo-org/device-detector/actions/workflows/phpstan.yml/badge.svg?branch=master)](https://github.com/matomo-org/device-detector/actions/workflows/phpstan.yml?branch=master "PHPStan")
 [![PHPCS](https://github.com/matomo-org/device-detector/actions/workflows/phpcs.yml/badge.svg?branch=master)](https://github.com/matomo-org/device-detector/actions/workflows/phpcs.yml?branch=master "PHPCS")
 [![YAML Lint](https://github.com/matomo-org/device-detector/actions/workflows/yamllint.yml/badge.svg?branch=master)](https://github.com/matomo-org/device-detector/actions/workflows/yamllint.yml?branch=master "YAML Lint")
 [![Validate regular Expressions](https://github.com/matomo-org/device-detector/actions/workflows/regular_expressions.yml/badge.svg?branch=master)](https://github.com/matomo-org/device-detector/actions/workflows/regular_expressions.yml?branch=master "Validate regular Expressions")

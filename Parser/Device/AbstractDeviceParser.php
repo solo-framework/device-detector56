@@ -8,7 +8,6 @@
  * @license http://www.gnu.org/licenses/lgpl.html LGPL v3 or later
  */
 
-declare(strict_types=1);
 
 namespace DeviceDetector\Parser\Device;
 
@@ -36,20 +35,20 @@ abstract class AbstractDeviceParser extends AbstractParser
      */
     protected $brand = '';
 
-    public const DEVICE_TYPE_DESKTOP              = 0;
-    public const DEVICE_TYPE_SMARTPHONE           = 1;
-    public const DEVICE_TYPE_TABLET               = 2;
-    public const DEVICE_TYPE_FEATURE_PHONE        = 3;
-    public const DEVICE_TYPE_CONSOLE              = 4;
-    public const DEVICE_TYPE_TV                   = 5; // including set top boxes, blu-ray players,...
-    public const DEVICE_TYPE_CAR_BROWSER          = 6;
-    public const DEVICE_TYPE_SMART_DISPLAY        = 7;
-    public const DEVICE_TYPE_CAMERA               = 8;
-    public const DEVICE_TYPE_PORTABLE_MEDIA_PAYER = 9;
-    public const DEVICE_TYPE_PHABLET              = 10;
-    public const DEVICE_TYPE_SMART_SPEAKER        = 11;
-    public const DEVICE_TYPE_WEARABLE             = 12; // including set watches, headsets
-    public const DEVICE_TYPE_PERIPHERAL           = 13; // including portable terminal, portable projector
+    const DEVICE_TYPE_DESKTOP              = 0;
+    const DEVICE_TYPE_SMARTPHONE           = 1;
+    const DEVICE_TYPE_TABLET               = 2;
+    const DEVICE_TYPE_FEATURE_PHONE        = 3;
+    const DEVICE_TYPE_CONSOLE              = 4;
+    const DEVICE_TYPE_TV                   = 5; // including set top boxes, blu-ray players,...
+    const DEVICE_TYPE_CAR_BROWSER          = 6;
+    const DEVICE_TYPE_SMART_DISPLAY        = 7;
+    const DEVICE_TYPE_CAMERA               = 8;
+    const DEVICE_TYPE_PORTABLE_MEDIA_PAYER = 9;
+    const DEVICE_TYPE_PHABLET              = 10;
+    const DEVICE_TYPE_SMART_SPEAKER        = 11;
+    const DEVICE_TYPE_WEARABLE             = 12; // including set watches, headsets
+    const DEVICE_TYPE_PERIPHERAL           = 13; // including portable terminal, portable projector
 
     /**
      * Detectable device types
@@ -2239,7 +2238,7 @@ abstract class AbstractDeviceParser extends AbstractParser
      *
      * @return int|null
      */
-    public function getDeviceType(): ?int
+    public function getDeviceType()
     {
         return $this->deviceType;
     }
@@ -2251,7 +2250,7 @@ abstract class AbstractDeviceParser extends AbstractParser
      *
      * @return array
      */
-    public static function getAvailableDeviceTypes(): array
+    public static function getAvailableDeviceTypes()
     {
         return self::$deviceTypes;
     }
@@ -2261,7 +2260,7 @@ abstract class AbstractDeviceParser extends AbstractParser
      *
      * @return array
      */
-    public static function getAvailableDeviceTypeNames(): array
+    public static function getAvailableDeviceTypeNames()
     {
         return \array_keys(self::$deviceTypes);
     }
@@ -2273,7 +2272,7 @@ abstract class AbstractDeviceParser extends AbstractParser
      *
      * @return string
      */
-    public static function getDeviceName(int $deviceType): string
+    public static function getDeviceName($deviceType)
     {
         $deviceName = \array_search($deviceType, self::$deviceTypes, true);
 
@@ -2289,7 +2288,7 @@ abstract class AbstractDeviceParser extends AbstractParser
      *
      * @return string
      */
-    public function getModel(): string
+    public function getModel()
     {
         return $this->model;
     }
@@ -2299,7 +2298,7 @@ abstract class AbstractDeviceParser extends AbstractParser
      *
      * @return string
      */
-    public function getBrand(): string
+    public function getBrand()
     {
         return $this->brand;
     }
@@ -2311,7 +2310,7 @@ abstract class AbstractDeviceParser extends AbstractParser
      *
      * @return string
      */
-    public static function getFullName(string $brandId): string
+    public static function getFullName($brandId)
     {
         if (\array_key_exists($brandId, self::$deviceBrands)) {
             return self::$deviceBrands[$brandId];
@@ -2329,7 +2328,7 @@ abstract class AbstractDeviceParser extends AbstractParser
      *
      * @deprecated since 4.0 - short codes might be removed in next major release
      */
-    public static function getShortCode(string $brand): string
+    public static function getShortCode($brand)
     {
         $shortcode = (string) \array_search($brand, self::$deviceBrands, true) ?: '';
 
@@ -2345,7 +2344,7 @@ abstract class AbstractDeviceParser extends AbstractParser
      *
      * @param string $userAgent
      */
-    public function setUserAgent(string $userAgent): void
+    public function setUserAgent($userAgent)
     {
         $this->reset();
         parent::setUserAgent($userAgent);
@@ -2354,10 +2353,10 @@ abstract class AbstractDeviceParser extends AbstractParser
     /**
      * @inheritdoc
      */
-    public function parse(): ?array
+    public function parse()
     {
         $resultClientHint = $this->parseClientHints();
-        $deviceModel      = $resultClientHint['model'] ?? '';
+        $deviceModel = isset($resultClientHint['model']) ? $resultClientHint['model'] : '';
 
         $this->restoreUserAgentFromClientHints();
 
@@ -2382,7 +2381,7 @@ abstract class AbstractDeviceParser extends AbstractParser
         $brand = (string) $brand;
 
         if (empty($matches)) {
-            $this->deviceType = $resultClientHint['deviceType'] ?? null;
+            $this->deviceType = isset($resultClientHint['deviceType']) ? $resultClientHint['deviceType'] : null;
 
             return $resultClientHint;
         }
@@ -2445,7 +2444,7 @@ abstract class AbstractDeviceParser extends AbstractParser
      *
      * @return string
      */
-    protected function buildModel(string $model, array $matches): string
+    protected function buildModel($model, array $matches)
     {
         $model = $this->buildByMatch($model, $matches);
 
@@ -2463,7 +2462,7 @@ abstract class AbstractDeviceParser extends AbstractParser
     /**
      * @return array|null
      */
-    protected function parseClientHints(): ?array
+    protected function parseClientHints()
     {
         if ($this->clientHints && $this->clientHints->getModel()) {
             $detectedDeviceType = null;
@@ -2490,7 +2489,7 @@ abstract class AbstractDeviceParser extends AbstractParser
     /**
      * Resets the stored values
      */
-    protected function reset(): void
+    protected function reset()
     {
         $this->deviceType = null;
         $this->model      = '';
@@ -2500,7 +2499,7 @@ abstract class AbstractDeviceParser extends AbstractParser
     /**
      * @return array
      */
-    protected function getResult(): array
+    protected function getResult()
     {
         return [
             'deviceType' => $this->deviceType,

@@ -8,7 +8,6 @@
  * @license http://www.gnu.org/licenses/lgpl.html LGPL v3 or later
  */
 
-declare(strict_types=1);
 
 namespace DeviceDetector\Tests\Parser\Device;
 
@@ -17,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class ShellTvTest extends TestCase
 {
-    public function testIsShellTv(): void
+    public function testIsShellTv()
     {
         $dd = new ShellTv();
         $dd->setUserAgent('Leff Shell LC390TA2A');

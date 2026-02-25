@@ -8,7 +8,6 @@
  * @license http://www.gnu.org/licenses/lgpl.html LGPL v3 or later
  */
 
-declare(strict_types=1);
 
 namespace DeviceDetector\Cache;
 
@@ -29,7 +28,7 @@ class StaticCache implements CacheInterface
     /**
      * @inheritdoc
      */
-    public function fetch(string $id)
+    public function fetch($id)
     {
         return $this->contains($id) ? self::$staticCache[$id] : false;
     }
@@ -37,7 +36,7 @@ class StaticCache implements CacheInterface
     /**
      * @inheritdoc
      */
-    public function contains(string $id): bool
+    public function contains($id)
     {
         return isset(self::$staticCache[$id]) || \array_key_exists($id, self::$staticCache);
     }
@@ -45,7 +44,7 @@ class StaticCache implements CacheInterface
     /**
      * @inheritdoc
      */
-    public function save(string $id, $data, int $lifeTime = 0): bool
+    public function save($id, $data, $lifeTime = 0)
     {
         self::$staticCache[$id] = $data;
 
@@ -55,7 +54,7 @@ class StaticCache implements CacheInterface
     /**
      * @inheritdoc
      */
-    public function delete(string $id): bool
+    public function delete($id)
     {
         unset(self::$staticCache[$id]);
 
@@ -65,7 +64,7 @@ class StaticCache implements CacheInterface
     /**
      * @inheritdoc
      */
-    public function flushAll(): bool
+    public function flushAll()
     {
         self::$staticCache = [];
 

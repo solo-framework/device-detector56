@@ -8,7 +8,6 @@
  * @license http://www.gnu.org/licenses/lgpl.html LGPL v3 or later
  */
 
-declare(strict_types=1);
 
 namespace DeviceDetector\Tests;
 
@@ -17,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class ClientHintsTest extends TestCase
 {
-    public function testHeaders(): void
+    public function testHeaders()
     {
         $headers = [
             'sec-ch-ua'                  => '"Opera";v="83", " Not;A Brand";v="99", "Chromium";v="98"',
@@ -37,7 +36,7 @@ class ClientHintsTest extends TestCase
         ], $ch->getBrandList());
     }
 
-    public function testHeadersHttp(): void
+    public function testHeadersHttp()
     {
         $headers = [
             'HTTP_SEC_CH_UA_FULL_VERSION_LIST' => '" Not A;Brand";v="99.0.0.0", "Chromium";v="98.0.4758.82", "Opera";v="98.0.4758.82"',
@@ -63,7 +62,7 @@ class ClientHintsTest extends TestCase
         self::assertEquals(['desktop'], $ch->getFormFactors());
     }
 
-    public function testHeadersJavascript(): void
+    public function testHeadersJavascript()
     {
         $headers = [
             'fullVersionList' => [
@@ -91,7 +90,7 @@ class ClientHintsTest extends TestCase
         self::assertEquals(['desktop'], $ch->formFactors);
     }
 
-    public function testIncorrectVersionListIsDiscarded(): void
+    public function testIncorrectVersionListIsDiscarded()
     {
         $headers = [
             'fullVersionList' => [

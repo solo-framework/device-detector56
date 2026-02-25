@@ -8,7 +8,6 @@
  * @license http://www.gnu.org/licenses/lgpl.html LGPL v3 or later
  */
 
-declare(strict_types=1);
 
 namespace DeviceDetector\Parser\Client;
 
@@ -891,7 +890,7 @@ class Browser extends AbstractClientParser
      * @param string           $ua
      * @param ClientHints|null $clientHints
      */
-    public function __construct(string $ua = '', ?ClientHints $clientHints = null)
+    public function __construct($ua = '', ClientHints $clientHints = null)
     {
         $this->browserHints = new BrowserHints($ua, $clientHints);
         parent::__construct($ua, $clientHints);
@@ -902,7 +901,7 @@ class Browser extends AbstractClientParser
      *
      * @param ?ClientHints $clientHints client hints
      */
-    public function setClientHints(?ClientHints $clientHints): void
+    public function setClientHints(ClientHints $clientHints)
     {
         parent::setClientHints($clientHints);
         $this->browserHints->setClientHints($clientHints);
@@ -913,7 +912,7 @@ class Browser extends AbstractClientParser
      *
      * @param string $ua user agent
      */
-    public function setUserAgent(string $ua): void
+    public function setUserAgent($ua)
     {
         parent::setUserAgent($ua);
         $this->browserHints->setUserAgent($ua);
@@ -924,7 +923,7 @@ class Browser extends AbstractClientParser
      *
      * @param CacheInterface $cache
      */
-    public function setCache(CacheInterface $cache): void
+    public function setCache(CacheInterface $cache)
     {
         parent::setCache($cache);
         $this->browserHints->setCache($cache);
@@ -934,7 +933,7 @@ class Browser extends AbstractClientParser
      * Returns list of all available browsers
      * @return array
      */
-    public static function getAvailableBrowsers(): array
+    public static function getAvailableBrowsers()
     {
         return self::$availableBrowsers;
     }
@@ -943,7 +942,7 @@ class Browser extends AbstractClientParser
      * Returns list of all available browser families
      * @return array
      */
-    public static function getAvailableBrowserFamilies(): array
+    public static function getAvailableBrowserFamilies()
     {
         return self::$browserFamilies;
     }
@@ -953,7 +952,7 @@ class Browser extends AbstractClientParser
      *
      * @return string
      */
-    public static function getBrowserShortName(string $name): ?string
+    public static function getBrowserShortName($name)
     {
         foreach (self::getAvailableBrowsers() as $browserShort => $browserName) {
             if (\strtolower($name) === \strtolower($browserName)) {
@@ -969,7 +968,7 @@ class Browser extends AbstractClientParser
      *
      * @return string|null If null, "Unknown"
      */
-    public static function getBrowserFamily(string $browserLabel): ?string
+    public static function getBrowserFamily($browserLabel)
     {
         if (\in_array($browserLabel, self::$availableBrowsers, true)) {
             $browserLabel = (string) \array_search($browserLabel, self::$availableBrowsers, true);
@@ -991,7 +990,7 @@ class Browser extends AbstractClientParser
      *
      * @return bool
      */
-    public static function isMobileOnlyBrowser(string $browser): bool
+    public static function isMobileOnlyBrowser($browser)
     {
         return \in_array($browser, self::$mobileOnlyBrowsers) || (\in_array($browser, self::$availableBrowsers, true)
                 && \in_array(\array_search($browser, self::$availableBrowsers, true), self::$mobileOnlyBrowsers, true));
@@ -1002,7 +1001,7 @@ class Browser extends AbstractClientParser
      *
      * @param YamlParser $yamlParser
      */
-    public function setYamlParser(YamlParser $yamlParser): void
+    public function setYamlParser(YamlParser $yamlParser)
     {
         parent::setYamlParser($yamlParser);
         $this->browserHints->setYamlParser($this->getYamlParser());
@@ -1011,7 +1010,7 @@ class Browser extends AbstractClientParser
     /**
      * @inheritdoc
      */
-    public function parse(): ?array
+    public function parse()
     {
         $browserFromClientHints = $this->parseBrowserFromClientHints();
         $browserFromUserAgent   = $this->parseBrowserFromUserAgent();
@@ -1036,8 +1035,8 @@ class Browser extends AbstractClientParser
             if (0 === \strpos($version, '15') && 0 === \strpos($browserFromUserAgent['version'], '114')) {
                 $name          = '360 Secure Browser';
                 $short         = '3B';
-                $engine        = $browserFromUserAgent['engine'] ?? '';
-                $engineVersion = $browserFromUserAgent['engine_version'] ?? '';
+                $engine = isset($browserFromUserAgent['engine']) ? $browserFromUserAgent['engine'] : '';
+                $engineVersion = isset($browserFromUserAgent['engine_version']) ? $browserFromUserAgent['engine_version'] : '';
             }
 
             // If client hints report the following browsers, we use the version from useragent
@@ -1048,8 +1047,8 @@ class Browser extends AbstractClientParser
             }
 
             if ('Vewd Browser' === $name) {
-                $engine        = $browserFromUserAgent['engine'] ?? '';
-                $engineVersion = $browserFromUserAgent['engine_version'] ?? '';
+                $engine = isset($browserFromUserAgent['engine']) ? $browserFromUserAgent['engine'] : '';
+                $engineVersion = isset($browserFromUserAgent['engine_version']) ? $browserFromUserAgent['engine_version'] : '';
             }
 
             // If client hints report Chromium, but user agent detects a Chromium based browser, we favor this instead
@@ -1072,13 +1071,13 @@ class Browser extends AbstractClientParser
             if ($name !== $browserFromUserAgent['name']
                 && self::getBrowserFamily($name) === self::getBrowserFamily($browserFromUserAgent['name'])
             ) {
-                $engine        = $browserFromUserAgent['engine'] ?? '';
-                $engineVersion = $browserFromUserAgent['engine_version'] ?? '';
+                $engine = isset($browserFromUserAgent['engine']) ? $browserFromUserAgent['engine'] : '';
+                $engineVersion = isset($browserFromUserAgent['engine_version']) ? $browserFromUserAgent['engine_version'] : '';
             }
 
             if ($name === $browserFromUserAgent['name']) {
-                $engine        = $browserFromUserAgent['engine'] ?? '';
-                $engineVersion = $browserFromUserAgent['engine_version'] ?? '';
+                $engine = isset($browserFromUserAgent['engine']) ? $browserFromUserAgent['engine'] : '';
+                $engineVersion = isset($browserFromUserAgent['engine_version']) ? $browserFromUserAgent['engine_version'] : '';
             }
 
             // In case the user agent reports a more detailed version, we try to use this instead
@@ -1117,7 +1116,10 @@ class Browser extends AbstractClientParser
 
             if (\preg_match('~Chrome/.+ Safari/537.36~i', $this->userAgent)) {
                 $engine        = 'Blink';
-                $family        = self::getBrowserFamily((string) $short) ?? 'Chrome';
+                $family = self::getBrowserFamily((string) $short);
+                if (null === $family) {
+                    $family = 'Chrome';
+                }
                 $engineVersion = $this->buildEngineVersion($engine);
             }
 
@@ -1178,7 +1180,7 @@ class Browser extends AbstractClientParser
      *
      * @return array
      */
-    protected function parseBrowserFromClientHints(): array
+    protected function parseBrowserFromClientHints()
     {
         $name = $version = $short = '';
 
@@ -1222,7 +1224,7 @@ class Browser extends AbstractClientParser
      *
      * @throws \Exception
      */
-    protected function parseBrowserFromUserAgent(): array
+    protected function parseBrowserFromUserAgent()
     {
         foreach ($this->getRegexes() as $regex) {
             $matches = $this->matchUserAgent($regex['regex']);
@@ -1247,7 +1249,7 @@ class Browser extends AbstractClientParser
 
         if (null !== $browserShort) {
             $version       = $this->buildVersion((string) $regex['version'], $matches);
-            $engine        = $this->buildEngine($regex['engine'] ?? [], $version);
+            $engine = $this->buildEngine(isset($regex['engine']) ? $regex['engine'] : [], $version);
             $engineVersion = $this->buildEngineVersion($engine);
 
             return [
@@ -1275,9 +1277,9 @@ class Browser extends AbstractClientParser
      *
      * @throws \Exception
      */
-    protected function buildEngine(array $engineData, string $browserVersion): string
+    protected function buildEngine(array $engineData, $browserVersion)
     {
-        $engine = $engineData['default'] ?? '';
+        $engine = isset($engineData['default']) ? $engineData['default'] : '';
 
         // check if engine is set for browser version
         if (\array_key_exists('versions', $engineData) && \is_array($engineData['versions'])) {
@@ -1297,7 +1299,7 @@ class Browser extends AbstractClientParser
             $engineParser->setCache($this->getCache());
             $engineParser->setUserAgent($this->userAgent);
             $result = $engineParser->parse();
-            $engine = $result['engine'] ?? '';
+            $engine = isset($result['engine']) ? $result['engine'] : '';
         }
 
         return $engine;
@@ -1310,10 +1312,10 @@ class Browser extends AbstractClientParser
      *
      * @throws \Exception
      */
-    protected function buildEngineVersion(string $engine): string
+    protected function buildEngineVersion($engine)
     {
         $result = (new Engine\Version($this->userAgent, $engine))->parse();
 
-        return $result['version'] ?? '';
+        return isset($result['version']) ? $result['version'] : '';
     }
 }

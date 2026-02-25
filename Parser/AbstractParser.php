@@ -8,7 +8,6 @@
  * @license http://www.gnu.org/licenses/lgpl.html LGPL v3 or later
  */
 
-declare(strict_types=1);
 
 namespace DeviceDetector\Parser;
 
@@ -84,30 +83,30 @@ abstract class AbstractParser
      * Versioning constant used to set max versioning to major version only
      * Version examples are: 3, 5, 6, 200, 123, ...
      */
-    public const VERSION_TRUNCATION_MAJOR = 0;
+    const VERSION_TRUNCATION_MAJOR = 0;
 
     /**
      * Versioning constant used to set max versioning to minor version
      * Version examples are: 3.4, 5.6, 6.234, 0.200, 1.23, ...
      */
-    public const VERSION_TRUNCATION_MINOR = 1;
+    const VERSION_TRUNCATION_MINOR = 1;
 
     /**
      * Versioning constant used to set max versioning to path level
      * Version examples are: 3.4.0, 5.6.344, 6.234.2, 0.200.3, 1.2.3, ...
      */
-    public const VERSION_TRUNCATION_PATCH = 2;
+    const VERSION_TRUNCATION_PATCH = 2;
 
     /**
      * Versioning constant used to set versioning to build number
      * Version examples are: 3.4.0.12, 5.6.334.0, 6.234.2.3, 0.200.3.1, 1.2.3.0, ...
      */
-    public const VERSION_TRUNCATION_BUILD = 3;
+    const VERSION_TRUNCATION_BUILD = 3;
 
     /**
      * Versioning constant used to set versioning to unlimited (no truncation)
      */
-    public const VERSION_TRUNCATION_NONE = -1;
+    const VERSION_TRUNCATION_NONE = -1;
 
     /**
      * @var CacheInterface|null
@@ -124,7 +123,7 @@ abstract class AbstractParser
      *
      * @return array|null
      */
-    abstract public function parse(): ?array;
+    abstract public function parse();
 
     /**
      * AbstractParser constructor.
@@ -132,7 +131,7 @@ abstract class AbstractParser
      * @param string       $ua
      * @param ?ClientHints $clientHints
      */
-    public function __construct(string $ua = '', ?ClientHints $clientHints = null)
+    public function __construct($ua = '', ClientHints $clientHints = null)
     {
         $this->setUserAgent($ua);
         $this->setClientHints($clientHints);
@@ -141,7 +140,7 @@ abstract class AbstractParser
     /**
      * Restore useragent from client hints
      */
-    public function restoreUserAgentFromClientHints(): void
+    public function restoreUserAgentFromClientHints()
     {
         if (null === $this->clientHints) {
             return;
@@ -179,7 +178,7 @@ abstract class AbstractParser
      * Set how DeviceDetector should return versions
      * @param int $type Any of the VERSION_TRUNCATION_* constants
      */
-    public static function setVersionTruncation(int $type): void
+    public static function setVersionTruncation($type)
     {
         if (!\in_array($type, [
             self::VERSION_TRUNCATION_BUILD,
@@ -200,7 +199,7 @@ abstract class AbstractParser
      *
      * @param string $ua user agent
      */
-    public function setUserAgent(string $ua): void
+    public function setUserAgent($ua)
     {
         $this->userAgent = $ua;
     }
@@ -210,7 +209,7 @@ abstract class AbstractParser
      *
      * @param ?ClientHints $clientHints client hints
      */
-    public function setClientHints(?ClientHints $clientHints): void
+    public function setClientHints(ClientHints $clientHints)
     {
         $this->clientHints = $clientHints;
     }
@@ -220,7 +219,7 @@ abstract class AbstractParser
      *
      * @return string
      */
-    public function getName(): string
+    public function getName()
     {
         return $this->parserName;
     }
@@ -230,7 +229,7 @@ abstract class AbstractParser
      *
      * @param CacheInterface $cache
      */
-    public function setCache(CacheInterface $cache): void
+    public function setCache(CacheInterface $cache)
     {
         $this->cache = $cache;
     }
@@ -240,7 +239,7 @@ abstract class AbstractParser
      *
      * @return CacheInterface
      */
-    public function getCache(): CacheInterface
+    public function getCache()
     {
         if (!empty($this->cache)) {
             return $this->cache;
@@ -254,7 +253,7 @@ abstract class AbstractParser
      *
      * @param YamlParser $yamlParser
      */
-    public function setYamlParser(YamlParser $yamlParser): void
+    public function setYamlParser(YamlParser $yamlParser)
     {
         $this->yamlParser = $yamlParser;
     }
@@ -264,7 +263,7 @@ abstract class AbstractParser
      *
      * @return YamlParser
      */
-    public function getYamlParser(): YamlParser
+    public function getYamlParser()
     {
         if (!empty($this->yamlParser)) {
             return $this->yamlParser;
@@ -278,7 +277,7 @@ abstract class AbstractParser
      *
      * @return array
      */
-    protected function getRegexes(): array
+    protected function getRegexes()
     {
         if (empty($this->regexList)) {
             $cacheKey     = 'DeviceDetector-' . DeviceDetector::VERSION . 'regexes-' . $this->getName();
@@ -314,7 +313,7 @@ abstract class AbstractParser
      *
      * @return string
      */
-    protected function applyClientHintMapping(string $name): string
+    protected function applyClientHintMapping($name)
     {
         foreach (static::$clientHintMapping as $mappedName => $clientHints) {
             foreach ($clientHints as $clientHint) {
@@ -330,7 +329,7 @@ abstract class AbstractParser
     /**
      * @return string
      */
-    protected function getRegexesDirectory(): string
+    protected function getRegexesDirectory()
     {
         return \dirname(__DIR__);
     }
@@ -342,7 +341,7 @@ abstract class AbstractParser
      *
      * @throws \Exception
      */
-    protected function hasDesktopFragment(): bool
+    protected function hasDesktopFragment()
     {
         $regexExcludeDesktopFragment = \implode('|', [
             'CE-HTML',
@@ -360,7 +359,7 @@ abstract class AbstractParser
      *
      * @return bool
      */
-    protected function hasUserAgentClientHintsFragment(): bool
+    protected function hasUserAgentClientHintsFragment()
     {
         $pattern = '~Android (?:1[0-6][.\d]*; K(?: Build/|[;)])|1[0-6]\)) AppleWebKit~i';
 
@@ -380,7 +379,7 @@ abstract class AbstractParser
      *
      * @throws \Exception
      */
-    protected function matchUserAgent(string $regex): ?array
+    protected function matchUserAgent($regex)
     {
         $matches = [];
 
@@ -408,7 +407,7 @@ abstract class AbstractParser
      *
      * @return string
      */
-    protected function buildByMatch(string $item, array $matches): string
+    protected function buildByMatch($item, array $matches)
     {
         $search  = [];
         $replace = [];
@@ -416,7 +415,7 @@ abstract class AbstractParser
 
         for ($nb = 1; $nb <= $count; $nb++) {
             $search[]  = '$' . $nb;
-            $replace[] = $matches[$nb] ?? '';
+            $replace[] = isset($matches[$nb]) ? $matches[$nb] : '';
         }
 
         return \trim(\str_replace($search, $replace, $item));
@@ -435,7 +434,7 @@ abstract class AbstractParser
      *
      * @return string
      */
-    protected function buildVersion(string $versionString, array $matches): string
+    protected function buildVersion($versionString, array $matches)
     {
         $versionString = $this->buildByMatch($versionString, $matches);
         $versionString = \str_replace('_', '.', $versionString);
@@ -463,7 +462,7 @@ abstract class AbstractParser
      *
      * @throws \Exception
      */
-    protected function preMatchOverall(): ?array
+    protected function preMatchOverall()
     {
         $regexes = $this->getRegexes();
 
@@ -497,7 +496,7 @@ abstract class AbstractParser
      *
      * @return bool
      */
-    protected function fuzzyCompare(string $value1, string $value2): bool
+    protected function fuzzyCompare($value1, $value2)
     {
         return \str_replace(' ', '', \strtolower($value1)) ===
             \str_replace(' ', '', \strtolower($value2));

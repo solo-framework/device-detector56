@@ -8,7 +8,6 @@
  * @license http://www.gnu.org/licenses/lgpl.html LGPL v3 or later
  */
 
-declare(strict_types=1);
 
 namespace DeviceDetector\Tests\Parser\Client;
 
@@ -27,8 +26,7 @@ class BrowserTest extends TestCase
     /**
      * @dataProvider getFixtures
      */
-    #[DataProvider('getFixtures')]
-    public function testParse(string $useragent, array $client, ?array $headers = null): void
+    public function testParse($useragent, array $client, array $headers = null)
     {
         $browserParser = new Browser();
         $browserParser::setVersionTruncation(Browser::VERSION_TRUNCATION_NONE);
@@ -51,36 +49,36 @@ class BrowserTest extends TestCase
         self::$browsersTested[] = $client['name'];
     }
 
-    public static function getFixtures(): array
+    public static function getFixtures()
     {
         $fixtureData = Spyc::YAMLLoad(\realpath(__DIR__) . '/fixtures/browser.yml');
 
-        $fixtureData = \array_map(static function (array $item): array {
-            return ['useragent' => $item['user_agent'], 'client' => $item['client'], 'headers' => $item['headers'] ?? null];
+        $fixtureData = \array_map(static function (array $item) {
+            return ['useragent' => $item['user_agent'], 'client' => $item['client'], 'headers' => isset($item['headers']) ? $item['headers'] : null];
         }, $fixtureData);
 
         return $fixtureData;
     }
 
-    public function testGetAvailableBrowserFamilies(): void
+    public function testGetAvailableBrowserFamilies()
     {
         $this->assertGreaterThan(5, Browser::getAvailableBrowserFamilies());
     }
 
-    public function testAllBrowsersTested(): void
+    public function testAllBrowsersTested()
     {
         $allBrowsers       = \array_values(Browser::getAvailableBrowsers());
         $browsersNotTested = \array_diff($allBrowsers, self::$browsersTested);
         $this->assertEmpty($browsersNotTested, 'This browsers are not tested: ' . \implode(', ', $browsersNotTested));
     }
 
-    public function testGetAvailableClients(): void
+    public function testGetAvailableClients()
     {
         $available = Browser::getAvailableClients();
         $this->assertGreaterThanOrEqual(\count($available), \count(Browser::getAvailableBrowsers()));
     }
 
-    public function testStructureBrowsersYml(): void
+    public function testStructureBrowsersYml()
     {
         $ymlDataItems = Spyc::YAMLLoad(__DIR__ . '/../../../regexes/client/browsers.yml');
 
@@ -94,7 +92,7 @@ class BrowserTest extends TestCase
         }
     }
 
-    public function testBrowserFamiliesNoDuplicates(): void
+    public function testBrowserFamiliesNoDuplicates()
     {
         foreach (Browser::getAvailableBrowserFamilies() as $browser => $families) {
             foreach (\array_count_values($families) as $shortcode => $count) {
@@ -107,7 +105,7 @@ class BrowserTest extends TestCase
         }
     }
 
-    public function testShortCodesComparisonWithBrowsers(): void
+    public function testShortCodesComparisonWithBrowsers()
     {
         $reflectionClass = new \ReflectionClass(Browser::class);
         $browserProperty = $reflectionClass->getProperty('availableBrowsers');
@@ -144,7 +142,7 @@ class BrowserTest extends TestCase
      * @return array
      * @throws \ReflectionException
      */
-    public static function getFixturesBrowserHints(): array
+    public static function getFixturesBrowserHints()
     {
         $method = new \ReflectionMethod(BrowserHints::class, 'getRegexes');
 
@@ -165,8 +163,7 @@ class BrowserTest extends TestCase
     /**
      * @dataProvider getFixturesBrowserHints
      */
-    #[DataProvider('getFixturesBrowserHints')]
-    public function testBrowserHintsForAvailableBrowsers(string $name): void
+    public function testBrowserHintsForAvailableBrowsers($name)
     {
         $browserShort = Browser::getBrowserShortName($name);
         $this->assertNotEquals(
@@ -176,7 +173,7 @@ class BrowserTest extends TestCase
         );
     }
 
-    protected function checkBrowserEngine(string $engine): bool
+    protected function checkBrowserEngine($engine)
     {
         if ('' === $engine) {
             return true;
@@ -184,7 +181,7 @@ class BrowserTest extends TestCase
 
         $engines         = Engine::getAvailableEngines();
         $enginePos       = \array_search($engine, $engines, false);
-        $engineReference = $engines[$enginePos] ?? null;
+        $engineReference = isset($engines[$enginePos]) ? $engines[$enginePos] : null;
 
         return $engineReference === $engine;
     }

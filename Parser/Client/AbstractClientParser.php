@@ -8,7 +8,6 @@
  * @license http://www.gnu.org/licenses/lgpl.html LGPL v3 or later
  */
 
-declare(strict_types=1);
 
 namespace DeviceDetector\Parser\Client;
 
@@ -44,7 +43,7 @@ abstract class AbstractClientParser extends AbstractParser
      * NOTE: Doing the big match before matching every single regex speeds up the detection
      *
      */
-    public function parse(): ?array
+    public function parse()
     {
         $result = null;
 
@@ -74,9 +73,9 @@ abstract class AbstractClientParser extends AbstractParser
      *
      * @return array
      */
-    public static function getAvailableClients(): array
+    public static function getAvailableClients()
     {
-        $regexes = (new static())->getRegexes(); // @phpstan-ignore-line
+        $regexes = (new static())->getRegexes();
         $names   = [];
 
         foreach ($regexes as $regex) {

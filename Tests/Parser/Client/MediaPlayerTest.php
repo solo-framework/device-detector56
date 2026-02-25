@@ -8,7 +8,6 @@
  * @license http://www.gnu.org/licenses/lgpl.html LGPL v3 or later
  */
 
-declare(strict_types=1);
 
 namespace DeviceDetector\Tests\Parser\Client;
 
@@ -22,8 +21,7 @@ class MediaPlayerTest extends TestCase
     /**
      * @dataProvider getFixtures
      */
-    #[DataProvider('getFixtures')]
-    public function testParse(string $useragent, array $client): void
+    public function testParse($useragent, array $client)
     {
         $mediaPlayerParser = new MediaPlayer();
         $mediaPlayerParser::setVersionTruncation(MediaPlayer::VERSION_TRUNCATION_NONE);
@@ -31,18 +29,18 @@ class MediaPlayerTest extends TestCase
         $this->assertEquals($client, $mediaPlayerParser->parse());
     }
 
-    public static function getFixtures(): array
+    public static function getFixtures()
     {
         $fixtureData = Spyc::YAMLLoad(\realpath(__DIR__) . '/fixtures/mediaplayer.yml');
 
-        $fixtureData = \array_map(static function (array $item): array {
+        $fixtureData = \array_map(static function (array $item) {
             return ['useragent' => $item['user_agent'], 'client' => $item['client']];
         }, $fixtureData);
 
         return $fixtureData;
     }
 
-    public function testStructureMediaPlayerYml(): void
+    public function testStructureMediaPlayerYml()
     {
         $ymlDataItems = Spyc::YAMLLoad(__DIR__ . '/../../../regexes/client/mediaplayers.yml');
 

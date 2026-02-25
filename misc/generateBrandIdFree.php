@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -32,7 +31,7 @@ $brandFreeIds  = array_diff($mapIds, $brandExistIds);
 $browserExistIds = array_keys(Browser::getAvailableBrowsers());
 $browserFreeIds  = array_diff($mapIds, $browserExistIds);
 
-function pettyTable(array $data): string
+function pettyTable(array $data)
 {
     $columns = [];
 

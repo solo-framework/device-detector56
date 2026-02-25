@@ -8,7 +8,6 @@
  * @license http://www.gnu.org/licenses/lgpl.html LGPL v3 or later
  */
 
-declare(strict_types=1);
 
 namespace DeviceDetector\Parser\Client\Browser;
 
@@ -64,7 +63,7 @@ class Engine extends AbstractClientParser
      * Returns list of all available browser engines
      * @return array
      */
-    public static function getAvailableEngines(): array
+    public static function getAvailableEngines()
     {
         return self::$availableEngines;
     }
@@ -72,7 +71,7 @@ class Engine extends AbstractClientParser
     /**
      * @inheritdoc
      */
-    public function parse(): ?array
+    public function parse()
     {
         $matches = false;
 

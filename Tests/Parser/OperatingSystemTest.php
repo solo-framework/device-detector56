@@ -8,7 +8,6 @@
  * @license http://www.gnu.org/licenses/lgpl.html LGPL v3 or later
  */
 
-declare(strict_types=1);
 
 namespace DeviceDetector\Tests\Parser;
 
@@ -25,8 +24,7 @@ class OperatingSystemTest extends TestCase
     /**
      * @dataProvider getFixtures
      */
-    #[DataProvider('getFixtures')]
-    public function testParse(string $useragent, array $os, ?array $headers = null): void
+    public function testParse($useragent, array $os, array $headers = null)
     {
         $osParser = new OperatingSystem();
         $osParser->setUserAgent($useragent);
@@ -39,12 +37,12 @@ class OperatingSystemTest extends TestCase
         self::$osTested[] = $os['name'];
     }
 
-    public static function getFixtures(): array
+    public static function getFixtures()
     {
         $fixtureData = Spyc::YAMLLoad(\realpath(__DIR__) . '/fixtures/oss.yml');
 
-        $fixtureData = \array_map(static function (array $item): array {
-            return ['useragent' => $item['user_agent'], 'os' => $item['os'], 'headers' => $item['headers'] ?? null];
+        $fixtureData = \array_map(static function (array $item) {
+            return ['useragent' => $item['user_agent'], 'os' => $item['os'], 'headers' => isset($item['headers']) ? $item['headers'] : null];
         }, $fixtureData);
 
         return $fixtureData;
@@ -53,14 +51,13 @@ class OperatingSystemTest extends TestCase
     /**
      * @dataProvider getAllOs
      */
-    #[DataProvider('getAllOs')]
-    public function testOSInGroup(string $os): void
+    public function testOSInGroup($os)
     {
         $familyOs = \call_user_func_array('array_merge', \array_values(OperatingSystem::getAvailableOperatingSystemFamilies()));
         $this->assertContains($os, $familyOs);
     }
 
-    public static function getAllOs(): array
+    public static function getAllOs()
     {
         $allOs = \array_keys(OperatingSystem::getAvailableOperatingSystems());
 
@@ -72,14 +69,13 @@ class OperatingSystemTest extends TestCase
     /**
      * @dataProvider getAllFamilyOs
      */
-    #[DataProvider('getAllFamilyOs')]
-    public function testFamilyOSExists(string $os): void
+    public function testFamilyOSExists($os)
     {
         $allOs = \array_keys(OperatingSystem::getAvailableOperatingSystems());
         $this->assertContains($os, $allOs);
     }
 
-    public static function getAllFamilyOs(): array
+    public static function getAllFamilyOs()
     {
         $allFamilyOs = \call_user_func_array('array_merge', \array_values(OperatingSystem::getAvailableOperatingSystemFamilies()));
 
@@ -88,7 +84,7 @@ class OperatingSystemTest extends TestCase
         }, $allFamilyOs);
     }
 
-    public function testGetAvailableOperatingSystems(): void
+    public function testGetAvailableOperatingSystems()
     {
         $this->assertGreaterThan(70, OperatingSystem::getAvailableOperatingSystems());
     }
@@ -96,13 +92,12 @@ class OperatingSystemTest extends TestCase
     /**
      * @dataProvider getNameFromIds
      */
-    #[DataProvider('getNameFromIds')]
-    public function testGetNameFromId(string $os, string $version, ?string $expected): void
+    public function testGetNameFromId($os, $version, $expected)
     {
         $this->assertEquals($expected, OperatingSystem::getNameFromId($os, $version));
     }
 
-    public static function getNameFromIds(): array
+    public static function getNameFromIds()
     {
         return [
             ['DEB', '4.5', 'Debian 4.5'],
@@ -112,7 +107,7 @@ class OperatingSystemTest extends TestCase
         ];
     }
 
-    public function testAllOperatingSystemsTested(): void
+    public function testAllOperatingSystemsTested()
     {
         $allBrowsers = OperatingSystem::getAvailableOperatingSystems();
         $osNotTested = \array_diff($allBrowsers, self::$osTested);

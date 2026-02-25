@@ -25,7 +25,6 @@
  * `php file-test.php /tmp/source-useragent.txt "not" "useragent" > /tmp/useragent-not-detected.txt`
  */
 
-declare(strict_types=1);
 
 use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
@@ -48,11 +47,11 @@ const DETECT_MODE_TYPE_NOT    = 'not';
 const REPORT_TYPE_YML       = 'yml';
 const REPORT_TYPE_USERAGENT = 'useragent';
 
-$file       = $argv[1] ?? '';
-$showMode   = $argv[2] ?? 'not';
-$reportMode = $argv[3] ?? 'yml';
+$file = isset($argv[1]) ? $argv[1] : '';
+$showMode = isset($argv[2]) ? $argv[2] : 'not';
+$reportMode = isset($argv[3]) ? $argv[3] : 'yml';
 
-function printHelpAndExit(): void
+function printHelpAndExit()
 {
     echo "Usage command:\n";
     echo "php file-test.php <patch to file> <detect mode> <report mode> > report.txt\n\n";
@@ -75,7 +74,7 @@ if (!is_file($file)) {
  * @param array $result
  * @param string $format
  */
-function printReport(array $result, string $format): void
+function printReport(array $result, $format)
 {
     if (REPORT_TYPE_YML === $format) {
         echo Spyc::YAMLDump($result, 2, 0);

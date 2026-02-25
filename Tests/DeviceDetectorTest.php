@@ -8,7 +8,6 @@
  * @license http://www.gnu.org/licenses/lgpl.html LGPL v3 or later
  */
 
-declare(strict_types=1);
 
 namespace DeviceDetector\Tests;
 
@@ -28,21 +27,21 @@ use PHPUnit\Framework\TestCase;
 
 class DeviceDetectorTest extends TestCase
 {
-    public function testAddClientParserInvalid(): void
+    public function testAddClientParserInvalid()
     {
         $this->expectException(\Throwable::class);
         $dd = new DeviceDetector();
         $dd->addClientParser('Invalid');
     }
 
-    public function testAddDeviceParserInvalid(): void
+    public function testAddDeviceParserInvalid()
     {
         $this->expectException(\Throwable::class);
         $dd = new DeviceDetector();
         $dd->addDeviceParser('Invalid');
     }
 
-    public function testDevicesYmlFiles(): void
+    public function testDevicesYmlFiles()
     {
         $allowedKeys = ['regex', 'device', 'models', 'model', 'brand'];
 
@@ -170,14 +169,14 @@ class DeviceDetectorTest extends TestCase
         }
     }
 
-    public function testSetCacheInvalid(): void
+    public function testSetCacheInvalid()
     {
         $this->expectException(\TypeError::class);
         $dd = new DeviceDetector();
         $dd->setCache('Invalid');
     }
 
-    public function testCacheSetAndGet(): void
+    public function testCacheSetAndGet()
     {
         if (!\class_exists('\Doctrine\Common\Cache\MemcachedCache') || !\extension_loaded('memcached')) {
             $this->markTestSkipped('memcached not enabled');
@@ -191,7 +190,7 @@ class DeviceDetectorTest extends TestCase
         $this->assertInstanceOf(DoctrineBridge::class, $dd->getCache());
     }
 
-    public function testParseEmptyUA(): void
+    public function testParseEmptyUA()
     {
         $dd = new DeviceDetector('');
         $dd->parse();
@@ -200,7 +199,7 @@ class DeviceDetectorTest extends TestCase
         $this->assertFalse($dd->isMobile());
     }
 
-    public function testParseInvalidUA(): void
+    public function testParseInvalidUA()
     {
         $dd = new DeviceDetector('12345');
         $dd->parse();
@@ -208,7 +207,7 @@ class DeviceDetectorTest extends TestCase
         $this->assertFalse($dd->isMobile());
     }
 
-    public function testIsParsed(): void
+    public function testIsParsed()
     {
         $dd = new DeviceDetector('Mozilla/5.0 (Linux; Android 4.2.2; ARCHOS 101 PLATINUM Build/JDQ39) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.114 Safari/537.36');
         $this->assertFalse($dd->isParsed());
@@ -219,8 +218,7 @@ class DeviceDetectorTest extends TestCase
     /**
      * @dataProvider getFixtures
      */
-    #[DataProvider('getFixtures')]
-    public function testParse(array $fixtureData): void
+    public function testParse(array $fixtureData)
     {
         $ua          = $fixtureData['user_agent'];
         $clientHints = !empty($fixtureData['headers']) ? ClientHints::factory($fixtureData['headers']) : null;
@@ -240,7 +238,7 @@ class DeviceDetectorTest extends TestCase
         $errorMessage = \sprintf(
             "UserAgent: %s\nHeaders: %s",
             $ua,
-            \print_r($fixtureData['headers'] ?? null, true)
+            \print_r(isset($fixtureData['headers']) ? $fixtureData['headers'] : null, true)
         );
 
         unset($fixtureData['headers']); // ignore headers in result
@@ -248,7 +246,7 @@ class DeviceDetectorTest extends TestCase
         $this->assertEquals($fixtureData, $uaInfo, $errorMessage);
     }
 
-    public static function getFixtures(): \Generator
+    public static function getFixtures()
     {
         foreach (\glob(\realpath(__DIR__) . '/fixtures/*.yml') as $fixturesPath) {
             $typeFixtures = \Spyc::YAMLLoad($fixturesPath);
@@ -267,8 +265,7 @@ class DeviceDetectorTest extends TestCase
     /**
      * @dataProvider getFixturesClient
      */
-    #[DataProvider('getFixturesClient')]
-    public function testParseClient(array $fixtureData): void
+    public function testParseClient(array $fixtureData)
     {
         $ua          = $fixtureData['user_agent'];
         $clientHints = !empty($fixtureData['headers']) ? ClientHints::factory($fixtureData['headers']) : null;
@@ -297,7 +294,7 @@ class DeviceDetectorTest extends TestCase
         $this->assertEquals($fixtureData['client'], $uaInfo['client'], $messageError);
     }
 
-    public static function getFixturesClient(): \Generator
+    public static function getFixturesClient()
     {
         foreach (\glob(\realpath(__DIR__) . '/Parser/Client/fixtures/*.yml') as $fixturesPath) {
             foreach (\Spyc::YAMLLoad($fixturesPath) as $fixture) {
@@ -309,8 +306,7 @@ class DeviceDetectorTest extends TestCase
     /**
      * @dataProvider getFixturesDevice
      */
-    #[DataProvider('getFixturesDevice')]
-    public function testParseDevice(array $fixtureData): void
+    public function testParseDevice(array $fixtureData)
     {
         $ua          = $fixtureData['user_agent'];
         $clientHints = !empty($fixtureData['headers']) ? ClientHints::factory($fixtureData['headers']) : null;
@@ -331,7 +327,7 @@ class DeviceDetectorTest extends TestCase
         $this->assertEquals($fixtureData['device'], $uaInfo['device']);
     }
 
-    public static function getFixturesDevice(): \Generator
+    public static function getFixturesDevice()
     {
         foreach (\glob(\realpath(__DIR__) . '/Parser/Device/fixtures/*.yml') as $fixturesPath) {
             foreach (\Spyc::YAMLLoad($fixturesPath) as $fixture) {
@@ -340,7 +336,7 @@ class DeviceDetectorTest extends TestCase
         }
     }
 
-    public static function getFixturesDeviceTypeFromClientHints(): array
+    public static function getFixturesDeviceTypeFromClientHints()
     {
         $useragent  = 'Some Unknown UA';
         $deviceName = '"Some Unknown Model"';
@@ -409,8 +405,7 @@ class DeviceDetectorTest extends TestCase
     /**
      * @dataProvider getFixturesDeviceTypeFromClientHints
      */
-    #[DataProvider('getFixturesDeviceTypeFromClientHints')]
-    public function testDetectDeviceTypeFromClientHints(string $useragent, array $headers, int $device): void
+    public function testDetectDeviceTypeFromClientHints($useragent, array $headers, $device)
     {
         $clientHints    = ClientHints::factory($headers);
         $deviceDetector = new DeviceDetector();
@@ -424,7 +419,7 @@ class DeviceDetectorTest extends TestCase
         $this->assertEquals(AbstractDeviceParser::getDeviceName($device), $deviceDetector->getDeviceName());
     }
 
-    public function testInstanceReusage(): void
+    public function testInstanceReusage()
     {
         $userAgents = [
             'Mozilla/5.0 (Linux; Android 4.2.2; ARCHOS 101 PLATINUM Build/JDQ39) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.114 Safari/537.36' => [
@@ -460,8 +455,7 @@ class DeviceDetectorTest extends TestCase
     /**
      * @dataProvider getVersionTruncationFixtures
      */
-    #[DataProvider('getVersionTruncationFixtures')]
-    public function testVersionTruncation(string $useragent, int $truncationType, string $osVersion, string $clientVersion): void
+    public function testVersionTruncation($useragent, $truncationType, $osVersion, $clientVersion)
     {
         AbstractParser::setVersionTruncation($truncationType);
         $dd = new DeviceDetector($useragent);
@@ -471,7 +465,7 @@ class DeviceDetectorTest extends TestCase
         AbstractParser::setVersionTruncation(AbstractParser::VERSION_TRUNCATION_NONE);
     }
 
-    public static function getVersionTruncationFixtures(): array
+    public static function getVersionTruncationFixtures()
     {
         return [
             ['Mozilla/5.0 (Linux; Android 4.2.2; ARCHOS 101 PLATINUM Build/JDQ39) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.114 Safari/537.36', AbstractParser::VERSION_TRUNCATION_NONE, '4.2.2', '34.0.1847.114'],
@@ -482,7 +476,7 @@ class DeviceDetectorTest extends TestCase
         ];
     }
 
-    public function testNotSkipDetectDeviceForClientHints(): void
+    public function testNotSkipDetectDeviceForClientHints()
     {
         $dd = $this->createPartialMock(Mobile::class, ['hasDesktopFragment']);
 
@@ -523,7 +517,7 @@ class DeviceDetectorTest extends TestCase
         ]);
     }
 
-    public function testVersionTruncationForClientHints(): void
+    public function testVersionTruncationForClientHints()
     {
         AbstractParser::setVersionTruncation(AbstractParser::VERSION_TRUNCATION_MINOR);
         $dd = new DeviceDetector();
@@ -552,8 +546,7 @@ class DeviceDetectorTest extends TestCase
     /**
      * @dataProvider getBotFixtures
      */
-    #[DataProvider('getBotFixtures')]
-    public function testParseBots(array $fixtureData): void
+    public function testParseBots(array $fixtureData)
     {
         $ua = $fixtureData['user_agent'];
         $dd = new DeviceDetector($ua);
@@ -604,7 +597,7 @@ class DeviceDetectorTest extends TestCase
         );
     }
 
-    public static function getBotFixtures(): array
+    public static function getBotFixtures()
     {
         $fixturesPath = \realpath(__DIR__ . '/fixtures/bots.yml');
         $fixtures     = \Spyc::YAMLLoad($fixturesPath);
@@ -614,7 +607,7 @@ class DeviceDetectorTest extends TestCase
         }, $fixtures);
     }
 
-    public function testGetInfoFromUABot(): void
+    public function testGetInfoFromUABot()
     {
         $expected = [
             'user_agent' => 'Googlebot/2.1 (http://www.googlebot.com/bot.html)',
@@ -631,7 +624,7 @@ class DeviceDetectorTest extends TestCase
         $this->assertEquals($expected, DeviceDetector::getInfoFromUserAgent($expected['user_agent']));
     }
 
-    public function testParseNoDetails(): void
+    public function testParseNoDetails()
     {
         $userAgent = 'Googlebot/2.1 (http://www.googlebot.com/bot.html)';
         $dd        = new DeviceDetector($userAgent);
@@ -640,7 +633,7 @@ class DeviceDetectorTest extends TestCase
         $this->assertEquals([true], $dd->getBot());
     }
 
-    public function testMagicMMethods(): void
+    public function testMagicMMethods()
     {
         $ua = 'Mozilla/5.0 (Linux; Android 4.4.2; Nexus 4 Build/KOT49H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.136 Mobile Safari/537.36';
         $dd = new DeviceDetector($ua);
@@ -664,7 +657,7 @@ class DeviceDetectorTest extends TestCase
         $this->assertFalse($dd->isFeedReader());
     }
 
-    public function testInvalidMagicMethod(): void
+    public function testInvalidMagicMethod()
     {
         $this->expectException(\BadMethodCallException::class);
         $dd = new DeviceDetector('Mozilla/5.0');
@@ -672,7 +665,7 @@ class DeviceDetectorTest extends TestCase
         $dd->inValidMethod();
     }
 
-    public function testGetOs(): void
+    public function testGetOs()
     {
         $dd = new DeviceDetector('Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)');
         $this->assertNull($dd->getOs());
@@ -687,7 +680,7 @@ class DeviceDetectorTest extends TestCase
         $this->assertEquals($expected, $dd->getOs());
     }
 
-    public function testGetClient(): void
+    public function testGetClient()
     {
         $dd = new DeviceDetector('Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)');
         $this->assertNull($dd->getClient());
@@ -704,11 +697,11 @@ class DeviceDetectorTest extends TestCase
         $this->assertEquals($expected, $dd->getClient());
     }
 
-    public static function getTypeMethodFixtures(): array
+    public static function getTypeMethodFixtures()
     {
         $fixtureData = \Spyc::YAMLLoad(\realpath(__DIR__ . '/Parser/fixtures/type-methods.yml'));
 
-        $fixtureData = \array_map(static function (array $item): array {
+        $fixtureData = \array_map(static function (array $item) {
             return ['ua' => $item['user_agent'], 'checkTypes' => $item['check']];
         }, $fixtureData);
 
@@ -718,8 +711,7 @@ class DeviceDetectorTest extends TestCase
     /**
      * @dataProvider getTypeMethodFixtures
      */
-    #[DataProvider('getTypeMethodFixtures')]
-    public function testTypeMethods(string $ua, array $checkTypes): void
+    public function testTypeMethods($ua, array $checkTypes)
     {
         try {
             $dd = $this->getDeviceDetector();
@@ -744,28 +736,28 @@ class DeviceDetectorTest extends TestCase
         ));
     }
 
-    public function testGetBrandName(): void
+    public function testGetBrandName()
     {
         $dd = new DeviceDetector('Mozilla/5.0 (Linux; Android 4.4.2; Nexus 4 Build/KOT49H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.136 Mobile Safari/537.36');
         $dd->parse();
         $this->assertEquals('Google', $dd->getBrandName());
     }
 
-    public function testGetBrand(): void
+    public function testGetBrand()
     {
         $dd = new DeviceDetector('Mozilla/5.0 (Linux; Android 4.4.2; Nexus 4 Build/KOT49H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.136 Mobile Safari/537.36');
         $dd->parse();
         $this->assertEquals('GO', $dd->getBrand());
     }
 
-    public function testIsTouchEnabled(): void
+    public function testIsTouchEnabled()
     {
         $dd = new DeviceDetector('Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; ARM; Trident/6.0; Touch; ARMBJS)');
         $dd->parse();
         $this->assertTrue($dd->isTouchEnabled());
     }
 
-    public function testSkipBotDetection(): void
+    public function testSkipBotDetection()
     {
         $ua = 'Mozilla/5.0 (iPhone; CPU iPhone OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5376e Safari/8536.25 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)';
         $dd = new DeviceDetector($ua);
@@ -779,7 +771,7 @@ class DeviceDetectorTest extends TestCase
         $this->assertFalse($dd->isBot());
     }
 
-    public function testSetYamlParserInvalid(): void
+    public function testSetYamlParserInvalid()
     {
         $this->expectException(\TypeError::class);
 
@@ -787,7 +779,7 @@ class DeviceDetectorTest extends TestCase
         $dd->setYamlParser('Invalid');
     }
 
-    public function testSetYamlParser(): void
+    public function testSetYamlParser()
     {
         $reader = function & ($object, $property) {
             $value = & Closure::bind(function & () use ($property) {
@@ -820,7 +812,7 @@ class DeviceDetectorTest extends TestCase
         }
     }
 
-    public function testCheckRegexRestrictionEndCondition(): void
+    public function testCheckRegexRestrictionEndCondition()
     {
         $this->assertTrue($this->checkRegexRestrictionEndCondition('([^;/)]+)[;/)]'), 'skip condition');
         $this->assertTrue($this->checkRegexRestrictionEndCondition('([^/;)]+)[;/)]'), 'skip condition');
@@ -835,7 +827,7 @@ class DeviceDetectorTest extends TestCase
     /**
      * Checks the AbstractDeviceParser::$deviceBrands for duplicate brands
      */
-    public function testDuplicateBrands(): void
+    public function testDuplicateBrands()
     {
         $brands     = \array_map('strtolower', AbstractDeviceParser::$deviceBrands);
         $unique     = \array_unique($brands);
@@ -850,7 +842,7 @@ class DeviceDetectorTest extends TestCase
     /**
      * check the Symfony parser for fixtures parsing errors
      */
-    public function testSymfonyParser(): void
+    public function testSymfonyParser()
     {
         $files       = \array_merge(
             \glob(__DIR__ . '/../regexes/client/*.yml'),
@@ -872,7 +864,7 @@ class DeviceDetectorTest extends TestCase
      *
      * @return bool
      */
-    protected function checkRegexVerticalLineClosingGroup(string $regexString): bool
+    protected function checkRegexVerticalLineClosingGroup($regexString)
     {
         if (false !== \strpos($regexString, '|)')) {
             return !\preg_match('#(?<!\\\)(\|\))#', $regexString);
@@ -889,7 +881,7 @@ class DeviceDetectorTest extends TestCase
      *
      * @return bool
      */
-    protected function checkRegexRestrictionAndroidOsVersionCondition(string $regexString): bool
+    protected function checkRegexRestrictionAndroidOsVersionCondition($regexString)
     {
         // check regex is condition android \d
         if (\preg_match('~Android (\d|\[)~i', $regexString)) {
@@ -906,7 +898,7 @@ class DeviceDetectorTest extends TestCase
      *
      * @return bool
      */
-    protected function checkRegexRestrictionEndCondition(string $regexString): bool
+    protected function checkRegexRestrictionEndCondition($regexString)
     {
         // get conditions [;)\ ]
         if (\preg_match_all('~(\[[);\\\ ]{4}\])~m', $regexString, $matches1)) {
@@ -926,7 +918,7 @@ class DeviceDetectorTest extends TestCase
         return true;
     }
 
-    private function getDeviceDetector(): DeviceDetector
+    private function getDeviceDetector()
     {
         static $dd;
 

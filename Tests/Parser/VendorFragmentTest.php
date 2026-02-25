@@ -8,7 +8,6 @@
  * @license http://www.gnu.org/licenses/lgpl.html LGPL v3 or later
  */
 
-declare(strict_types=1);
 
 namespace DeviceDetector\Tests\Parser;
 
@@ -24,8 +23,7 @@ class VendorFragmentTest extends TestCase
     /**
      * @dataProvider getFixtures
      */
-    #[DataProvider('getFixtures')]
-    public function testParse(string $useragent, string $vendor): void
+    public function testParse($useragent, $vendor)
     {
         $vfParser = new VendorFragment();
         $vfParser->setUserAgent($useragent);
@@ -33,12 +31,12 @@ class VendorFragmentTest extends TestCase
         self::$regexesTested[] = $vfParser->getMatchedRegex();
     }
 
-    public static function getFixtures(): array
+    public static function getFixtures()
     {
         return Spyc::YAMLLoad(\realpath(__DIR__) . '/fixtures/vendorfragments.yml');
     }
 
-    public function testAllRegexesTested(): void
+    public function testAllRegexesTested()
     {
         $regexesNotTested = [];
 
