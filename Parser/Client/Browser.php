@@ -901,7 +901,7 @@ class Browser extends AbstractClientParser
      *
      * @param ?ClientHints $clientHints client hints
      */
-    public function setClientHints(ClientHints $clientHints)
+    public function setClientHints(ClientHints $clientHints = null)
     {
         parent::setClientHints($clientHints);
         $this->browserHints->setClientHints($clientHints);
